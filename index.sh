@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# 
+# install ec2-api-tools for ubuntu (tested on saucy 13.10)
+#
+
+# stay safe
+set -e
+
+# default
+prefix=${prefix:-~/lib/ec2-api-tools/}
+
+# get id/secret if connected to a terminal
+if [ -t 0 ]; then
+  echo -n "enter your AWS_ACCESS_KEY: "
+  read -a key
+  echo -n "enter your AWS_SECRET_KEY: "
+  read -a secret
+fi
+
+# deps
+sudo apt-get -y install openjdk-7-jre
+sudo apt-get -y install unzip
+
+# dirs
+mkdir -p "$prefix"/archives
+mkdir -p "$prefix"/builds
+
+# workspace
+cd "$prefix"
+tmp=$(mktemp -d tmp.XXX)
+cd "$tmp"
+
+# download
+curl -fLO# http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip
+
+# unpack
+unzip ec2-api-tools.zip
+
+# cache archive
+mv ec2-api-tools.zip ../archives
+
+# rename build to plain version number
+version="$(ls | sed s/.*-//)"
+mv "$(ls)" ../builds/"$version"
+
+# clean up
+cd ..
+rm -rf "$tmp"
+
+# remember some locations
+build="$prefix"/builds/"$version"
+etc="$build"/etc
+
+# find annoying java
+java_home="$(readlink -f /usr/bin/java | sed "s:bin/java::")"
+
+# echo config out to etc file
+echo 'export PATH="'"$build"'/bin:$PATH"' > "$etc"
+echo 'export EC2_HOME="'"$build"'"' >> "$etc"
+echo 'export JAVA_HOME="'"$java_home"'"' >> "$etc"
+echo 'export AWS_ACCESS_KEY="'"$key"'"' >> "$etc"
+echo 'export AWS_SECRET_KEY="'"$secret"'"' >> "$etc"
+
+# include etc in your bashrc
+echo '. '"$etc" >> ~/.bashrc
+echo 'please run `source ~/.bashrc`'
