@@ -1,4 +1,4 @@
-# ec2-api-tools-installer
+# install-ec2-api-tools
 does what you imagine it would
 
 ## why
