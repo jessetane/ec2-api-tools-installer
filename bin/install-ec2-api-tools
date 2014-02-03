@@ -7,7 +7,10 @@
 set -e
 
 # default
-prefix=${prefix:-~/lib/ec2-api-tools/}
+prefix=${prefix:-/usr/local}
+
+# dirname
+prefix=$prefix/ec2-api-tools
 
 # get id/secret if connected to a terminal
 if [ -t 0 ]; then
