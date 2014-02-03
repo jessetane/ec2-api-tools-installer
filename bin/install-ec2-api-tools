@@ -72,7 +72,8 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # source etc
-echo '. '"$etc\n" > ~/.bashrc
+echo '. '"$etc" > ~/.bashrc
+echo '' >> ~/.bashrc
 
 # append old bashrc
 if [ -n "$tmp" ]; then
