@@ -64,6 +64,20 @@ echo 'export JAVA_HOME="'"$java_home"'"' >> "$etc"
 echo 'export AWS_ACCESS_KEY="'"$key"'"' >> "$etc"
 echo 'export AWS_SECRET_KEY="'"$secret"'"' >> "$etc"
 
-# include etc in your bashrc
-echo '. '"$etc" >> ~/.bashrc
+# XXX ugh terrible danger include etc in your bashrc
+unset tmp
+if [ -f ~/.bashrc ]; then
+  tmp=$(mktemp ~/.bashrc.XXXX)
+  cp ~/.bashrc "$tmp"
+fi
+
+# source etc
+echo '. '"$etc\n" > ~/.bashrc
+
+# append old bashrc
+if [ -n "$tmp" ]; then
+  cat "$tmp" >> ~/.bashrc
+  rm "$tmp"
+fi
+
 echo 'please run `source ~/.bashrc`'
