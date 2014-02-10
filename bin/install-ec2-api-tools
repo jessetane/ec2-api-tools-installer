@@ -3,6 +3,12 @@
 # install ec2-api-tools for ubuntu (tested on saucy 13.10)
 #
 
+# require root
+if [ "$(id -u)" != "0" ]; then
+  echo "this script must be run as root" >&2
+  exit 1
+fi
+
 set -e
 
 # default
@@ -20,8 +26,8 @@ if [ -t 0 ]; then
 fi
 
 # deps
-sudo apt-get -y install openjdk-7-jre
-sudo apt-get -y install unzip
+apt-get -y install openjdk-7-jre
+apt-get -y install unzip
 
 # dirs
 mkdir -p "$dest"/archives
@@ -55,16 +61,16 @@ etc="$build"/etc
 
 # global env vars
 EC2_HOME="EC2_HOME=\"$build\""
-sudo sed -i 's/^EC2_HOME=.*/'"$EC2_HOME"'/' /etc/environment || echo "$EC2_HOME" | sudo tee -a /etc/environment
+sed -i 's/^EC2_HOME=.*/'"$EC2_HOME"'/' /etc/environment || echo "$EC2_HOME" | tee -a /etc/environment
 
 JAVA_HOME="JAVA_HOME=\"$(readlink -f /usr/bin/java | sed "s:bin/java::")\""
-sudo sed -i 's/^JAVA_HOME=.*/'"$JAVA_HOME"'/' /etc/environment || echo "$JAVA_HOME" | sudo tee -a /etc/environment
+sed -i 's/^JAVA_HOME=.*/'"$JAVA_HOME"'/' /etc/environment || echo "$JAVA_HOME" | tee -a /etc/environment
 
 AWS_ACCESS_KEY="AWS_ACCESS_KEY=\"$key\""
-sudo sed -i 's/^AWS_ACCESS_KEY=.*/'"$AWS_ACCESS_KEY"'/' /etc/environment || echo "$AWS_ACCESS_KEY" | sudo tee -a /etc/environment
+sed -i 's/^AWS_ACCESS_KEY=.*/'"$AWS_ACCESS_KEY"'/' /etc/environment || echo "$AWS_ACCESS_KEY" | tee -a /etc/environment
 
 AWS_SECRET_KEY="AWS_ACCESS_KEY=\"$secret\""
-sudo sed -i 's/^AWS_SECRET_KEY=.*/'"$AWS_SECRET_KEY"'/' /etc/environment || echo "$AWS_SECRET_KEY" | sudo tee -a /etc/environment
+sed -i 's/^AWS_SECRET_KEY=.*/'"$AWS_SECRET_KEY"'/' /etc/environment || echo "$AWS_SECRET_KEY" | tee -a /etc/environment
 
 # link into "$prefix"/bin
 cd "$build"/bin
