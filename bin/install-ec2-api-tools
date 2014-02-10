@@ -3,14 +3,13 @@
 # install ec2-api-tools for ubuntu (tested on saucy 13.10)
 #
 
-# stay safe
 set -e
 
 # default
 prefix=${prefix:-/usr/local}
 
 # dirname
-ec2home=$prefix/ec2-api-tools
+dest=$prefix/ec2-api-tools
 
 # get id/secret if connected to a terminal
 if [ -t 0 ]; then
@@ -25,11 +24,11 @@ sudo apt-get -y install openjdk-7-jre
 sudo apt-get -y install unzip
 
 # dirs
-mkdir -p "$ec2home"/archives
-mkdir -p "$ec2home"/builds
+mkdir -p "$dest"/archives
+mkdir -p "$dest"/builds
 
 # workspace
-cd "$ec2home"
+cd "$dest"
 tmp=$(mktemp -d tmp.XXX)
 cd "$tmp"
 
@@ -40,28 +39,32 @@ curl -fLO# http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip
 unzip ec2-api-tools.zip
 
 # cache archive
-mv ec2-api-tools.zip ../archives
+mv -f ec2-api-tools.zip ../archives
 
 # rename build to plain version number
 version="$(ls | sed s/.*-//)"
-mv "$(ls)" ../builds/"$version"
+mv -f "$(ls)" ../builds/"$version"
 
 # clean up
 cd ..
 rm -rf "$tmp"
 
 # remember some locations
-build="$ec2home"/builds/"$version"
+build="$dest"/builds/"$version"
 etc="$build"/etc
 
-# find annoying java
-java_home="$(readlink -f /usr/bin/java | sed "s:bin/java::")"
+# global env vars
+EC2_HOME="EC2_HOME=\"$build\""
+sudo sed -i 's/^EC2_HOME=.*/'"$EC2_HOME"'/' /etc/environment || echo "$EC2_HOME" | sudo tee -a /etc/environment
 
-# global env
-echo 'EC2_HOME="'"$build"'"' | sudo tee -a /etc/environment
-echo 'JAVA_HOME="'"$java_home"'"' | sudo tee -a /etc/environment
-echo 'AWS_ACCESS_KEY="'"$key"'"' | sudo tee -a /etc/environment
-echo 'AWS_SECRET_KEY="'"$secret"'"' | sudo tee -a /etc/environment
+JAVA_HOME="JAVA_HOME=\"$(readlink -f /usr/bin/java | sed "s:bin/java::")\""
+sudo sed -i 's/^JAVA_HOME=.*/'"$JAVA_HOME"'/' /etc/environment || echo "$JAVA_HOME" | sudo tee -a /etc/environment
+
+AWS_ACCESS_KEY="AWS_ACCESS_KEY=\"$key\""
+sudo sed -i 's/^AWS_ACCESS_KEY=.*/'"$AWS_ACCESS_KEY"'/' /etc/environment || echo "$AWS_ACCESS_KEY" | sudo tee -a /etc/environment
+
+AWS_SECRET_KEY="AWS_ACCESS_KEY=\"$secret\""
+sudo sed -i 's/^AWS_SECRET_KEY=.*/'"$AWS_SECRET_KEY"'/' /etc/environment || echo "$AWS_SECRET_KEY" | sudo tee -a /etc/environment
 
 # link into "$prefix"/bin
 cd "$build"/bin
