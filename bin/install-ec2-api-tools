@@ -10,7 +10,7 @@ set -e
 prefix=${prefix:-/usr/local}
 
 # dirname
-prefix=$prefix/ec2-api-tools
+ec2home=$prefix/ec2-api-tools
 
 # get id/secret if connected to a terminal
 if [ -t 0 ]; then
@@ -25,11 +25,11 @@ sudo apt-get -y install openjdk-7-jre
 sudo apt-get -y install unzip
 
 # dirs
-mkdir -p "$prefix"/archives
-mkdir -p "$prefix"/builds
+mkdir -p "$ec2home"/archives
+mkdir -p "$ec2home"/builds
 
 # workspace
-cd "$prefix"
+cd "$ec2home"
 tmp=$(mktemp -d tmp.XXX)
 cd "$tmp"
 
@@ -51,17 +51,22 @@ cd ..
 rm -rf "$tmp"
 
 # remember some locations
-build="$prefix"/builds/"$version"
+build="$ec2home"/builds/"$version"
 etc="$build"/etc
 
 # find annoying java
 java_home="$(readlink -f /usr/bin/java | sed "s:bin/java::")"
 
-# echo config out to etc file
-echo 'PATH="'"$build"'/bin:$PATH"' | sudo tee -a /etc/environment
+# global env
 echo 'EC2_HOME="'"$build"'"' | sudo tee -a /etc/environment
 echo 'JAVA_HOME="'"$java_home"'"' | sudo tee -a /etc/environment
 echo 'AWS_ACCESS_KEY="'"$key"'"' | sudo tee -a /etc/environment
 echo 'AWS_SECRET_KEY="'"$secret"'"' | sudo tee -a /etc/environment
+
+# link into "$prefix"/bin
+cd "$build"/bin
+for b in $(ls -A "$build"/bin/!(*.cmd)); do
+  ln -sf "$build"/bin/"$b" "$prefix"/bin/
+done
 
 echo 'please reload your shell'
