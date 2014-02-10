@@ -58,27 +58,10 @@ etc="$build"/etc
 java_home="$(readlink -f /usr/bin/java | sed "s:bin/java::")"
 
 # echo config out to etc file
-echo 'export PATH="'"$build"'/bin:$PATH"' > "$etc"
-echo 'export EC2_HOME="'"$build"'"' >> "$etc"
-echo 'export JAVA_HOME="'"$java_home"'"' >> "$etc"
-echo 'export AWS_ACCESS_KEY="'"$key"'"' >> "$etc"
-echo 'export AWS_SECRET_KEY="'"$secret"'"' >> "$etc"
+echo 'PATH="'"$build"'/bin:$PATH"' >> sudo tee -a /etc/environment
+echo 'EC2_HOME="'"$build"'"' >> sudo tee -a /etc/environment
+echo 'JAVA_HOME="'"$java_home"'"' >> sudo tee -a /etc/environment
+echo 'AWS_ACCESS_KEY="'"$key"'"' >> sudo tee -a /etc/environment
+echo 'AWS_SECRET_KEY="'"$secret"'"' >> sudo tee -a /etc/environment
 
-# XXX ugh terrible danger include etc in your bashrc
-unset tmp
-if [ -f /etc/bash.bashrc ]; then
-  tmp=$(mktemp /etc/bash.bashrc.XXXX)
-  cp /etc/bash.bashrc "$tmp"
-fi
-
-# source etc
-echo '. '"$etc" > /etc/bash.bashrc
-echo '' >> /etc/bash.bashrc
-
-# append old bashrc
-if [ -n "$tmp" ]; then
-  cat "$tmp" >> /etc/bash.bashrc
-  rm "$tmp"
-fi
-
-echo 'please run `source /etc/bash.bashrc`'
+echo 'please reload your shell'
