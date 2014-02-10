@@ -58,10 +58,10 @@ etc="$build"/etc
 java_home="$(readlink -f /usr/bin/java | sed "s:bin/java::")"
 
 # echo config out to etc file
-echo 'PATH="'"$build"'/bin:$PATH"' >> sudo tee -a /etc/environment
-echo 'EC2_HOME="'"$build"'"' >> sudo tee -a /etc/environment
-echo 'JAVA_HOME="'"$java_home"'"' >> sudo tee -a /etc/environment
-echo 'AWS_ACCESS_KEY="'"$key"'"' >> sudo tee -a /etc/environment
-echo 'AWS_SECRET_KEY="'"$secret"'"' >> sudo tee -a /etc/environment
+echo 'PATH="'"$build"'/bin:$PATH"' | sudo tee -a /etc/environment
+echo 'EC2_HOME="'"$build"'"' | sudo tee -a /etc/environment
+echo 'JAVA_HOME="'"$java_home"'"' | sudo tee -a /etc/environment
+echo 'AWS_ACCESS_KEY="'"$key"'"' | sudo tee -a /etc/environment
+echo 'AWS_SECRET_KEY="'"$secret"'"' | sudo tee -a /etc/environment
 
 echo 'please reload your shell'
