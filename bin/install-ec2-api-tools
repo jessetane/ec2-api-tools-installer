@@ -65,7 +65,7 @@ echo 'AWS_SECRET_KEY="'"$secret"'"' | sudo tee -a /etc/environment
 
 # link into "$prefix"/bin
 cd "$build"/bin
-for b in $(ls -A "$build"/bin/!(*.cmd)); do
+for b in $(ls -A !(*.cmd)); do
   ln -sf "$build"/bin/"$b" "$prefix"/bin/
 done
 
