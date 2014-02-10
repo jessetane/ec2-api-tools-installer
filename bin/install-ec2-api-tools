@@ -66,19 +66,19 @@ echo 'export AWS_SECRET_KEY="'"$secret"'"' >> "$etc"
 
 # XXX ugh terrible danger include etc in your bashrc
 unset tmp
-if [ -f ~/.bashrc ]; then
-  tmp=$(mktemp ~/.bashrc.XXXX)
-  cp ~/.bashrc "$tmp"
+if [ -f /etc/bash.bashrc ]; then
+  tmp=$(mktemp /etc/bash.bashrc.XXXX)
+  cp /etc/bash.bashrc "$tmp"
 fi
 
 # source etc
-echo '. '"$etc" > ~/.bashrc
-echo '' >> ~/.bashrc
+echo '. '"$etc" > /etc/bash.bashrc
+echo '' >> /etc/bash.bashrc
 
 # append old bashrc
 if [ -n "$tmp" ]; then
-  cat "$tmp" >> ~/.bashrc
+  cat "$tmp" >> /etc/bash.bashrc
   rm "$tmp"
 fi
 
-echo 'please run `source ~/.bashrc`'
+echo 'please run `source /etc/bash.bashrc`'
